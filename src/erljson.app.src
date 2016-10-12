@@ -3,7 +3,7 @@
   {vsn, "0.0.1"},
   {registered, [erljson]},
   {applications, [kernel, stdlib]},
-  {maintainers, []},
-  {licenses, []},
-  {links, []}
+  {maintainers, ["Alexey Galiullin"]},
+  {licenses, ["MIT"]},
+  {links, [{"Github", "https://github.com/alexgal/erl-json.git"}]}
  ]}.
