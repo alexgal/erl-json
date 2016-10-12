@@ -1,0 +1,9 @@
+{application, erljson,
+ [{description, "Erlang json encoder/decoder to/from maps"},
+  {vsn, "0.0.1"},
+  {registered, [erljson]},
+  {applications, [kernel, stdlib]},
+  {maintainers, []},
+  {licenses, []},
+  {links, []}
+ ]}.
