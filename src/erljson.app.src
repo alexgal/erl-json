@@ -1,6 +1,6 @@
 {application, erljson,
  [{description, "Erlang json encoder/decoder to/from maps"},
-  {vsn, "0.0.1"},
+  {vsn, "0.1.0"},
   {registered, [erljson]},
   {applications, [kernel, stdlib]},
   {maintainers, ["Alexey Galiullin"]},
