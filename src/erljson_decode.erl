@@ -6,25 +6,21 @@
 
 -include_lib("eunit/include/eunit.hrl").
 
-decode(Binary) ->
-  parse(Binary).
-
-parse(_Binary = <<>>) ->
+decode(_Binary = <<>>) ->
   #{};
-
-parse(Binary = <<${, _Tail/binary>>)                     ->
+decode(Binary = <<${, _Tail/binary>>)                     ->
   {Acc, _Remainder} = parse_object(ltrim(Binary), #{}),
   Acc;
-parse(Binary = <<$[, _Tail/binary>>)                     ->
+decode(Binary = <<$[, _Tail/binary>>)                     ->
   {Acc, _Remainder} = parse_array(ltrim(Binary), []),
   Acc;
-parse(<<H, Tail/binary>>)
+decode(<<H, Tail/binary>>)
   when
     (H =:= $\n) orelse
     (H =:= $\r) orelse
     (H =:= $\t) orelse
     (H =:= $\s)                                   ->
-  parse(Tail).
+  decode(Tail).
 
 parse_object(<<>>, Acc)                           ->
   {Acc, <<>>};
@@ -187,7 +183,7 @@ test_linkedin_basic_profile_reply_test_() ->
           <<"title">> => <<"example glossary">>
         }
     },
-  Actual = parse(ExampleLinkedinBasicProfile),
+  Actual = decode(ExampleLinkedinBasicProfile),
   ?_assert(Expected =:= Actual).
 
 test_rfc_case2_test_() ->
@@ -230,7 +226,7 @@ test_rfc_case2_test_() ->
       <<"State">> => <<"CA">>,
       <<"Zip">> => <<"94085">>,
       <<"precision">> => <<"zip">>}],
-  Actual = parse(ExampleRfcCase2),
+  Actual = decode(ExampleRfcCase2),
   ?_assert(Expected =:= Actual).
 
 test_rfc_case1_test_() ->
@@ -257,68 +253,68 @@ test_rfc_case1_test_() ->
       <<"Width">> => 100},
     <<"Title">> => <<"View from 15th Floor">>,
     <<"Width">> => 800}},
-  Actual = parse(ExampleRfcCase1),
+  Actual = decode(ExampleRfcCase1),
   ?_assert(Actual =:= Expected).
 
 test_non_empty_root_array_test_() ->
   Expected = [123, 456, #{}, []],
-  Actual = parse(<<"[123, 456, {}, []]">>),
+  Actual = decode(<<"[123, 456, {}, []]">>),
   ?_assert(Expected =:= Actual).
 
 test_empty_root_array_test_() ->
   Expected = [],
-  Actual = parse(<<"[]">>),
+  Actual = decode(<<"[]">>),
   ?_assert(Expected =:= Actual).
 
 test_negative_float_value_test_() ->
   Expected = #{<<"key1">>=>-348.4850},
-  Actual = parse(<<"{ \"key1\" : -348.4850 }">>),
+  Actual = decode(<<"{ \"key1\" : -348.4850 }">>),
   ?_assert(Expected =:= Actual).
 
 test_float_value_test_() ->
   Expected = #{<<"key1">>=>348.4850},
-  Actual = parse(<<"{ \"key1\" : 348.4850 }">>),
+  Actual = decode(<<"{ \"key1\" : 348.4850 }">>),
   ?_assert(Expected =:= Actual).
 
 test_integer_value_test_() ->
   Expected = #{<<"key1">>=>3484850},
-  Actual = parse(<<"{ \"key1\" : 3484850 }">>),
+  Actual = decode(<<"{ \"key1\" : 3484850 }">>),
   ?_assert(Expected =:= Actual).
 
 test_non_empty_array_in_object_test_() ->
   Expected = #{<<"key1">>=>true, <<"key2">>=>[true, false, <<"str">>, null, #{}]},
-  Actual = parse(<<"{ \"key1\" : true, \"key2\" : [true, false, \"str\", null, {}]  }">>),
+  Actual = decode(<<"{ \"key1\" : true, \"key2\" : [true, false, \"str\", null, {}]  }">>),
   ?_assert(Expected =:= Actual).
 
 test_empty_array_in_object_test_() ->
   Expected = #{<<"key1">>=>true, <<"key2">>=>[]},
-  Actual = parse(<<"{ \"key1\" : true, \"key2\" : []  }">>),
+  Actual = decode(<<"{ \"key1\" : true, \"key2\" : []  }">>),
   ?_assert(Expected =:= Actual).
 
 test_recurse_object_test_() ->
   Expected = #{<<"key1">>=>#{<<"key2">>=>null, <<"key3">>=>true, <<"key4">>=><<"I'm a string">>}},
-  Actual = parse(<<"{ \"key1\" : { \"key2\":null, \"key3\":true, \"key4\":\"I'm a string\"      } }">>),
+  Actual = decode(<<"{ \"key1\" : { \"key2\":null, \"key3\":true, \"key4\":\"I'm a string\"      } }">>),
   ?_assert(Expected =:= Actual).
 
 test_empty_object_test_() ->
   Expected = #{<<"key1">>=>#{}},
-  Actual = parse(<<"{ \"key1\" : {} }">>),
+  Actual = decode(<<"{ \"key1\" : {} }">>),
   ?_assert(Expected =:= Actual).
 
 test_string_values_test_() ->
   Expected = #{<<"key1">>=><<"Helo amigos!">>},
-  Actual = parse(<<"{ \"key1\" : \"Helo amigos!\"}">>),
+  Actual = decode(<<"{ \"key1\" : \"Helo amigos!\"}">>),
   ?_assert(Expected =:= Actual).
 
 test_null_values_test_() ->
   Expected = #{<<"key1">>=>null},
-  Actual = parse(<<"{ \"key1\" : null}">>),
+  Actual = decode(<<"{ \"key1\" : null}">>),
   ?_assert(Expected =:= Actual).
 
 test_boolean_values_test_() ->
   Expected = #{<<"key1">>=>true, <<"key2">>=>false},
-  Actual = parse(<<"{ \"key1\" : true, \"key2\" : false  }">>),
+  Actual = decode(<<"{ \"key1\" : true, \"key2\" : false  }">>),
   ?_assert(Expected =:= Actual).
 
 test_empty_case_test_() ->
-  ?_assert(#{} =:= parse(<<>>)).
+  ?_assert(#{} =:= decode(<<>>)).
