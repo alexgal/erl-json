@@ -1,4 +1,4 @@
--module(erljson_decode).
+-module(erljson_decoder).
 -author("alexey").
 
 %% API

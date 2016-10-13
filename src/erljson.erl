@@ -6,7 +6,7 @@
 -export([encode/1]).
 
 decode(Binary) ->
-  json_decoder:decode(Binary).
+  erljson_decoder:decode(Binary).
 
 encode(Binary) ->
-  json_encoder:encode(Binary).
+  erljson_encoder:encode(Binary).
