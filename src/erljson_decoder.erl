@@ -30,8 +30,6 @@ parse_object(<<$,, Tail/binary>>, Acc)            ->
   {KV, Remainder} = parse_key_value(ltrim(Tail)),
   Acc1 = maps:merge(Acc, KV),
   parse_object(ltrim(Remainder), Acc1);
-parse_object(<<"}">>, Acc) -> %remove?
-  {Acc, <<>>};
 parse_object(<<$}, Tail/binary>>, Acc)            ->
   {Acc, Tail};
 parse_object(Binary, _Acc) ->
@@ -100,7 +98,10 @@ fetch_value(<<"false", Tail/binary>>) ->
 fetch_value(<<"null", Tail/binary>>)  ->
   {null, Tail};
 %%integer value
-fetch_value(Binary = <<H, _Tail/binary>>) when (H =:= $-) orelse ((H >= $0) andalso (H =< $9)) ->
+fetch_value(Binary = <<H, _Tail/binary>>)
+  when
+    (H =:= $-) orelse
+    ((H >= $0) andalso (H =< $9))     ->
   fetch_number(Binary, <<>>, integer);
 %%object
 fetch_value(Binary = <<${, _Tail/binary>>) ->
@@ -126,7 +127,8 @@ fetch_string(<<H, Tail/binary>>, Acc, in)       ->
 fetch_string(Binary, _Acc, _)                   ->
   invalid_json(Binary).
 
--spec fetch_number(binary(), binary(), Type)                                 -> {number(), binary()}
+-spec fetch_number(binary(), binary(), Type)                                 ->
+  {number(), binary()}
   when
   Type :: integer | float.
 fetch_number(<<H, Tail/binary>>, Acc = <<>>, Type) when (H =:= $-)           ->
