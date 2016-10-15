@@ -40,5 +40,4 @@ Todo
   * the range and precision of numbers;
   * the length and character contents of strings.
 * Performance wasn't checked and considered yet.
-* Explicit support for Utf-8 charcters wasn't tested.
-
+* Explicit support for UTF-8 characters wasn't tested.
