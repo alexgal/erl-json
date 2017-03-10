@@ -11,7 +11,7 @@ Usage
 Erljson has a very simple api. For example `decode/1` accepts binary and returns map in case valid json binary provided. 
 On other hand `encode/1` accepts map and returns json binary.
 
-`erljon:decode`
+`erljson:decode`
 ------------------
 
 * `Eshell V8.0.2  (abort with ^G)`
@@ -24,7 +24,7 @@ In case invalid json provided decode throws exception containing following tuple
 Where Binary is the one which was passed as an argument to decode. 
 
 
-`erljon:encode`
+`erljson:encode`
 ------------------
 
 * `Eshell V8.0.2  (abort with ^G)`
