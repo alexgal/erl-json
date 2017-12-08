@@ -1,39 +1,55 @@
 -module(encoder_tests).
--author("alexey").
 
 -include_lib("eunit/include/eunit.hrl").
 
--import(erljson, [encode/1]).
+base_test_empty_map_test() ->
+  <<"{}">> = erljson:json_encode(#{}).
 
-test_can_encode_list_test_() ->
-  ?_assert(<<"[{\"key\":\"value\"}]">> =:= encode([#{<<"key">>=><<"value">>}])).
+base_test_empty_list_test() ->
+  <<"[]">> = erljson:json_encode([]).
 
-test_can_encode_empty_map_test_() ->
-  ?_assert(<<"{}">> =:= encode(#{})).
+base_test_single_map_with_binary_keys_test() ->
+  Expected = <<"{\"a\":\"b\",\"c\":1,\"d\":0.4556,\"e\":true,\"f\":false,\"g\":null}">>,
+  Actual = erljson:json_encode(
+          #{
+            <<"a">> => <<"b">>,
+            <<"c">> => 1,
+            <<"d">> => 0.4556,
+            <<"e">> => true,
+            <<"f">> => false,
+            <<"g">> => undefined %resolves to null
+          }),
+  Expected = Actual.
 
-test_can_encode_binary_pair_test_() ->
-  ?_assert(<<"{\"key\":\"value\"}">> =:= encode(#{<<"key">> => <<"value">>})).
+base_test_map_of_maps_with_binary_keys_test() ->
+  Expected = <<"{\"h\":{\"a\":\"b\",\"c\":1,\"d\":0.4556,\"e\":true,\"f\":false,\"g\":null}}">>,
+  Actual = erljson:json_encode(
+          #{
+            <<"h">> =>
+              #{
+                <<"a">> => <<"b">>,
+                <<"c">> => 1,
+                <<"d">> => 0.4556,
+                <<"e">> => true,
+                <<"f">> => false,
+                <<"g">> => undefined %resolves to null
+              }
+          }),
+  Expected = Actual.
 
-test_can_encode_binary_pairs_test_() ->
-  ?_assert(<<"{\"key\":\"value\",\"key1\":\"value1\"}">> =:= encode(#{<<"key">> => <<"value">>, <<"key1">> => <<"value1">>})).
-
-test_can_encode_integer_test_() ->
-  ?_assert(<<"{\"key\":123456}">> =:= encode(#{<<"key">> => 123456})).
-
-test_can_encode_float_test_() ->
-  ?_assert(<<"{\"key\":12.3456}">> =:= encode(#{<<"key">> => 12.3456})).
-
-test_can_encode_boolean_test_() ->
-  ?_assert(<<"{\"key\":true,\"key1\":false}">> =:= encode(#{<<"key">> => true, <<"key1">> => false})).
-
-test_can_encode_null_test_() ->
-  ?_assert(<<"{\"key\":null}">> =:= encode(#{<<"key">> => null})).
-
-test_can_encode_recurse_object_test_() ->
-  ?_assert(<<"{\"key\":{\"key1\":\"value1\"}}">> =:= encode(#{<<"key">> => #{<<"key1">>=><<"value1">>}})).
-
-test_can_encode_recurse_array_value_test_() ->
-  ?_assert(<<"{\"key\":[{\"key1\":\"value1\"}]}">> =:= encode(#{<<"key">> => [#{<<"key1">>=><<"value1">>}]})).
-
-test_can_encode_recurse_array_root_test_() ->
-  ?_assert(<<"[{\"key\":[{\"key1\":\"value1\"}]}]">> =:= encode([#{<<"key">> => [#{<<"key1">>=><<"value1">>}]}])).
+base_test_list_of_maps_with_binary_keys_test() ->
+  Expected = <<"{\"h\":[{\"\a\":\"b\"},{\"a\":\"b1\",\"c\":11,\"d\":1.4556}]}">>,
+  Actual = erljson:json_encode(
+          #{
+            <<"h">> => [
+              #{
+                <<"a">> => <<"b">>
+              },
+              #{
+                <<"a">> => <<"b1">>,
+                <<"c">> => 11,
+                <<"d">> => 1.4556
+              }
+            ]
+          }),
+  Expected = Actual.

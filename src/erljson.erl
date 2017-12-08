@@ -1,12 +1,10 @@
 -module(erljson).
--author("alexey").
 
-%% API
--export([decode/1]).
--export([encode/1]).
+-export([json_decode/1]).
+-export([json_encode/1]).
 
-decode(Binary) ->
-  erljson_decoder:decode(Binary).
+json_decode(Json) ->
+  parser:parse(lexer:generate_tokens(Json)).
 
-encode(Binary) ->
-  erljson_encoder:encode(Binary).
+json_encode(Map) ->
+  encoder:encode(Map).
