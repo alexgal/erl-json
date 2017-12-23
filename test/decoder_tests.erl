@@ -5,30 +5,30 @@
 
 -import(erljson, [decode/1]).
 
-test_linkedin_basic_profile_reply_test_() ->
-  ExampleLinkedinBasicProfile =
+json_input_example__test() ->
+  Json =
     <<"{ \"glossary\": { \"title\": \"example glossary\", \"GlossDiv\": { \"title\": \"S\", \"GlossList\": [ { \"ID\": \"SGML\", \"SortAs\": \"SGML\", \"GlossTerm\": \"Standard Generalized Markup Language\", \"Acronym\": \"SGML\", \"Abbrev\": \"ISO 8879:1986\", \"GlossDef\": \"A meta-markup language, used to create markup languages such as DocBook.\", \"GlossSeeAlso\": [\"GML\", \"XML\", \"markup\"] } ] } } }">>,
   Expected =
     #{<<"glossary">> =>
-    #{<<"GlossDiv">> =>
-    #{<<"GlossList">> =>
-    [#{<<"Abbrev">> => <<"ISO 8879:1986">>,
-      <<"Acronym">> => <<"SGML">>,
-      <<"GlossDef">> => <<"A meta-markup language, used to create markup languages such as DocBook.">>,
-      <<"GlossSeeAlso">> => [<<"GML">>,<<"XML">>,<<"markup">>],
-      <<"GlossTerm">> => <<"Standard Generalized Markup Language">>,
-      <<"ID">> => <<"SGML">>,
-      <<"SortAs">> => <<"SGML">>
-    }],
-      <<"title">> => <<"S">>
+      #{<<"GlossDiv">> =>
+        #{<<"GlossList">> =>
+          [#{ <<"Abbrev">> => <<"ISO 8879:1986">>,
+              <<"Acronym">> => <<"SGML">>,
+              <<"GlossDef">> => <<"A meta-markup language, used to create markup languages such as DocBook.">>,
+              <<"GlossSeeAlso">> => [<<"GML">>,<<"XML">>,<<"markup">>],
+              <<"GlossTerm">> => <<"Standard Generalized Markup Language">>,
+              <<"ID">> => <<"SGML">>,
+              <<"SortAs">> => <<"SGML">>
+          }],
+          <<"title">> => <<"S">>
+        },
+        <<"title">> => <<"example glossary">>
+      }
     },
-      <<"title">> => <<"example glossary">>
-    }
-    },
-  Actual = decode(ExampleLinkedinBasicProfile),
+  Actual = decode(Json),
   ?_assert(Expected =:= Actual).
 
-test_rfc_case2_test_() ->
+rfc_case2_test() ->
   ExampleRfcCase2 =
     <<"     [
         {
@@ -71,7 +71,7 @@ test_rfc_case2_test_() ->
   Actual = decode(ExampleRfcCase2),
   ?_assert(Expected =:= Actual).
 
-test_rfc_case1_test_() ->
+rfc_case1_test() ->
   ExampleRfcCase1 =
     <<"{
       \"Image\": {
@@ -98,65 +98,71 @@ test_rfc_case1_test_() ->
   Actual = decode(ExampleRfcCase1),
   ?_assert(Actual =:= Expected).
 
-test_non_empty_root_array_test_() ->
+non_empty_root_array_test() ->
   Expected = [123, 456, #{}, []],
   Actual = decode(<<"[123, 456, {}, []]">>),
   ?_assert(Expected =:= Actual).
 
-test_empty_root_array_test_() ->
+empty_root_array_test() ->
   Expected = [],
   Actual = decode(<<"[]">>),
   ?_assert(Expected =:= Actual).
 
-test_negative_float_value_test_() ->
+negative_float_value_test() ->
   Expected = #{<<"key1">>=>-348.4850},
   Actual = decode(<<"{ \"key1\" : -348.4850 }">>),
   ?_assert(Expected =:= Actual).
 
-test_float_value_test_() ->
+float_value_test() ->
   Expected = #{<<"key1">>=>348.4850},
   Actual = decode(<<"{ \"key1\" : 348.4850 }">>),
   ?_assert(Expected =:= Actual).
 
-test_integer_value_test_() ->
+integer_value_test() ->
   Expected = #{<<"key1">>=>3484850},
   Actual = decode(<<"{ \"key1\" : 3484850 }">>),
   ?_assert(Expected =:= Actual).
 
-test_non_empty_array_in_object_test_() ->
+non_empty_array_in_object_test() ->
   Expected = #{<<"key1">>=>true, <<"key2">>=>[true, false, <<"str">>, null, #{}]},
   Actual = decode(<<"{ \"key1\" : true, \"key2\" : [true, false, \"str\", null, {}]  }">>),
   ?_assert(Expected =:= Actual).
 
-test_empty_array_in_object_test_() ->
+empty_array_in_object_test() ->
   Expected = #{<<"key1">>=>true, <<"key2">>=>[]},
   Actual = decode(<<"{ \"key1\" : true, \"key2\" : []  }">>),
   ?_assert(Expected =:= Actual).
 
-test_recurse_object_test_() ->
+recurse_object_test() ->
   Expected = #{<<"key1">>=>#{<<"key2">>=>null, <<"key3">>=>true, <<"key4">>=><<"I'm a string">>}},
   Actual = decode(<<"{ \"key1\" : { \"key2\":null, \"key3\":true, \"key4\":\"I'm a string\"      } }">>),
   ?_assert(Expected =:= Actual).
 
-test_empty_object_test_() ->
+empty_object_test() ->
   Expected = #{<<"key1">>=>#{}},
   Actual = decode(<<"{ \"key1\" : {} }">>),
   ?_assert(Expected =:= Actual).
 
-test_string_values_test_() ->
+string_values_test() ->
   Expected = #{<<"key1">>=><<"Helo amigos!">>},
   Actual = decode(<<"{ \"key1\" : \"Helo amigos!\"}">>),
   ?_assert(Expected =:= Actual).
 
-test_null_values_test_() ->
+null_values_test() ->
   Expected = #{<<"key1">>=>null},
   Actual = decode(<<"{ \"key1\" : null}">>),
   ?_assert(Expected =:= Actual).
 
-test_boolean_values_test_() ->
+boolean_values_test() ->
   Expected = #{<<"key1">>=>true, <<"key2">>=>false},
   Actual = decode(<<"{ \"key1\" : true, \"key2\" : false  }">>),
   ?_assert(Expected =:= Actual).
 
-test_empty_case_test_() ->
+empty_case_test() ->
   ?_assert(#{} =:= decode(<<>>)).
+
+unicode_support_values_test() ->
+  Expected = #{<<"key1">>=><<"юникод"/utf8>>},
+  Actual = decode(<<"{ \"key1\" : \"юникод\"}">>),
+  ?_assert(Expected =:= Actual).
+
