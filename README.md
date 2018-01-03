@@ -30,15 +30,17 @@ Where Binary is the one which was passed as an argument to decode.
 `erljson:encode`
 ------------------
 
-* `make run`
-* `Eshell V9.2  (abort with ^G)`
-* `1> erljson:encode(#{<<"key1">> => <<"value">>,<<"key2">> => true,<<"key3">> => []}).`
-* `<<"{\"key1\":\"value\",\"key2\":true,\"key3\":[]}">>`
+```make run
+Eshell V9.2  (abort with ^G)
+1> erljson:encode(#{<<"key1">> => <<"value">>,<<"key2">> => true,<<"key3">> => []}).
+<<"{\"key1\":\"value\",\"key2\":true,\"key3\":[]}">>
+```
 
 
 Utf8 support 
 ----
-* `erl -pa _build/default/lib/erljson/ebin/ +pc unicode`
-* `Eshell V9.2  (abort with ^G)`
-* `1> erljson:decode(<<"{\"key\":\"Юникод\"}"/utf8>>).`
-* `#{<<"key">> => <<"Юникод"/utf8>>}`
+```erl -pa _build/default/lib/erljson/ebin/ +pc unicode
+Eshell V9.2  (abort with ^G)
+1> erljson:decode(<<"{\"key\":\"Юникод\"}"/utf8>>).
+#{<<"key">> => <<"Юникод"/utf8>>}
+```
