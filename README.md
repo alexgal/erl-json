@@ -15,10 +15,11 @@ On other hand `encode/1` accepts map and returns json binary.
 `erljson:decode`
 ------------------
 
-* `make run`
-* `Eshell V9.2  (abort with ^G)`
-* `1> erljson:decode(<<"{\"key1\": \"value\", \"key2\": true, \"key3\": []}">>).`
-* ` ``#{<<"key1">> => <<"value">>,<<"key2">> => true,<<"key3">> => []}`
+```make run
+Eshell V9.2  (abort with ^G)
+1> erljson:decode(<<"{\"key1\": \"value\", \"key2\": true, \"key3\": []}">>).
+#{<<"key1">> => <<"value">>,<<"key2">> => true,<<"key3">> => []}
+```
 
 note on decode
 ---
